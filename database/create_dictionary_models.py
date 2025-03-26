@@ -65,26 +65,28 @@ def create_models_from_metadata():
 
                 for col in table_columns:
                     col_name = col.term.lower()
+                    checktype = col.data_type
                     col_type = DATA_TYPE_MAP.get(col.data_type, String)  # Default to String
                     fields[col_name] = Column(col_type)
                     col_type_sql = str(col_type().compile(dialect=engine.dialect))
 
+                    # TO DO -
                     # if table already created then alter and add columns
-                    if inspector.has_table(table_name):
-                        existing_columns = {
-                            col["name"].lower(): col["type"] for col in inspector.get_columns(table_name)
-                        }
-
-                        if col_name not in existing_columns:
-                            # Add new column
-                            alter_sql = f'ALTER TABLE {table_name} ADD COLUMN {col_name} {col_type_sql}'
-                            # engine.execute(text(alter_sql))
-                            session.execute(text(alter_sql))
-                        elif str(existing_columns[col_name]) != str(col_type):
-                            # Modify column type if it has changed
-                            alter_sql = f'ALTER TABLE {table_name} ALTER COLUMN {col_name} TYPE {col_type_sql}'
-                            # engine.execute(text(alter_sql))
-                            session.execute(text(alter_sql))
+                    # if inspector.has_table(table_name):
+                    #     existing_columns = {
+                    #         col["name"].lower(): col["type"] for col in inspector.get_columns(table_name)
+                    #     }
+                    #
+                    #     if col_name not in existing_columns:
+                    #         # Add new column
+                    #         alter_sql = f'ALTER TABLE {table_name} ADD COLUMN {col_name} {col_type_sql}'
+                    #         # engine.execute(text(alter_sql))
+                    #         session.execute(text(alter_sql))
+                    #     elif str(existing_columns[col_name]) != str(col_type):
+                    #         # Modify column type if it has changed
+                    #         alter_sql = f'ALTER TABLE {table_name} ALTER COLUMN {col_name} TYPE {col_type_sql}'
+                    #         # engine.execute(text(alter_sql))
+                    #         session.execute(text(alter_sql))
 
                 # session.commit()  # Ensure the change is saved
                 session.close()
