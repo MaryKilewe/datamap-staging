@@ -141,7 +141,7 @@ def process_usl_data(baselookup:str,  usl_data: Dict[str, Any]):
         # db = get_db()
         db: Session = SessionLocal()  # Create session from SessionLocal()
 
-        USLDictionaryModel = dynamic_models.get(baselookup)
+        USLDictionaryModel = dynamic_models.get(baselookup.lower())
 
         if not USLDictionaryModel:
             raise ValueError(f"Model for table '{baselookup}' not found.")
