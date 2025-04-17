@@ -48,9 +48,6 @@ class DataDictionaries(Base):
         self.updated_at = datetime.utcnow()
         super().save()
 
-    class Settings:
-        collection = "data_dictionaries"
-
 
 class DataDictionaryTerms(Base):
     __tablename__ = "DataDictionaryTerms"
@@ -71,29 +68,25 @@ class DataDictionaryTerms(Base):
         self.updated_at = datetime.utcnow()
         super().save()
 
-    class Settings:
-        collection = "data_dictionary_terms"
 
+class Facility(Base):
+    __tablename__ = "facility"
+    __table_args__ = {"schema": "base_layer"}
 
+    facilityid = Column(Integer, primary_key=True, nullable=False)
+    facilityname = Column(String, nullable=False)
+    facilitycountry = Column(String, nullable=False)
+    facilityregion = Column(String, nullable=False)
+    organizationid = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid1)
+    systemid = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid1)
 
-
-
-
-class Facilities(Base):
-    __tablename__ = "Facilities"
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid1)
-    facility_name = Column(UUID(as_uuid=True), default=uuid.uuid1)
-    site_code = Column(String, nullable=False)
-    created_at = Column(DateTime, nullable=False, default=datetime.utcnow())
-    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())
+    loaddate = Column(DateTime, nullable=False, default=datetime.utcnow())
+    date_created = Column(DateTime, nullable=False, default=datetime.utcnow())
+    date_updated = Column(DateTime, nullable=False, default=datetime.utcnow())
 
     def save(self):
-        self.updated_at = datetime.utcnow()
+        self.date_updated = datetime.utcnow()
         super().save()
-
-    class Settings:
-        collection = "facilities"
-
 
 class Manifests(Base):
     __tablename__ = "Manifests"
@@ -117,8 +110,7 @@ class Manifests(Base):
         self.created_at = datetime.utcnow()
         super().save()
 
-    class Settings:
-        collection = "manifests"
+
 
 
 

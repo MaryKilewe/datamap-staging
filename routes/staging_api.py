@@ -14,7 +14,7 @@ from typing import List
 from uuid import UUID
 import logging
 
-from models.models import Manifests,dynamic_models
+from models.models import Manifests,Facility,dynamic_models
 from database.database import get_database, SessionLocal, engine
 
 log = logging.getLogger()
@@ -59,6 +59,9 @@ class Manifest(BaseModel):
     opendive_version: str = Field(..., description="Opendive version sending data")
     facility_name: str = Field(..., description="Facility name")
     facility_id: str = Field(..., description="Facility id")
+    facility_country: str = Field(..., description="Facility country")
+    facility_region: str = Field(..., description="Facility region")
+    facility_organization: str = Field(..., description="Facility organization")
 
 
 
@@ -83,6 +86,24 @@ async def verify_manifest(manifest: Manifest, db: Session = Depends(get_db)):
         )
         db.add(new_manifest)
         db.commit()
+
+        facilityExists = db.query(Facility).filter(Facility.facilityid == manifest.facility_id).first()
+        if facilityExists:
+            db.query(Facility).filter(Facility.facilityid == manifest.facility_id).update(
+                {"facilityid":manifest.facility_id,
+                 "facilityname":manifest.facility_name,
+                "facilitycountry":manifest.facility_country,
+                "facilityregion":manifest.facility_region})
+            db.commit()
+        else:
+            new_facility = Facility(
+                facilityid=manifest.facility_id,
+                facilityname=manifest.facility_name,
+                facilitycountry=manifest.facility_country,
+                facilityregion=manifest.facility_region
+            )
+            db.add(new_facility)
+            db.commit()
 
         # clear extracts under this facility
         from models.models import dynamic_models
